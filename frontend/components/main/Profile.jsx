@@ -1,17 +1,57 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { formattedDate, formattedDateAndTime } from '../../utils/formatDate';
+import { formattedDateAndTime } from '../../utils/formatDate';
 import { useMainContext } from '../../context/MainContext';
-
+import { CiEdit } from "react-icons/ci";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const { user, setUser } = useMainContext();
+  const [ toggleEdit, setToggleEdit ] = useState(false);
   
   const handleLogout = async () => {
     await axios.get(`http://localhost:8000/api/v1/users/logout/${user?._id}`);
     localStorage.clear("userId")
     setUser(null)
     window.location.assign("/login")
+  }
+
+  const statusLabel = [
+    {
+      id: 1,
+      label: "Active"
+    },
+    {
+      id: 2,
+      label: "Inactive"
+    },
+    {
+      id: 3,
+      label: "Busy"
+    },
+    {
+      id: 4,
+      label: "Available"
+    },
+    {
+      id: 5,
+      label: "Unavailable"
+    },
+  ]
+
+  const changeUserStatus = async (status) => {
+    try {
+      const response = await axios.post(`http://localhost:8000/api/v1/users/update-status/65aabd58e4543155103180e5`, {
+        status
+      })
+      console.log(response.data.data.updatedUser);
+      setToggleEdit(false)
+      setUser(response.data.data.updatedUser)
+      toast.success("Status successfully updated");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message)
+    }
   }
 
   return (
@@ -36,7 +76,19 @@ const Profile = () => {
             </div>
             <div className="mb-4 sm:mb-0">
               <p className="text-lg font-semibold text-gray-800 mb-1">Status:</p>
-              <p className="text-sm font-semibold">{user?.status}</p>
+              <div className={`flex gap-2 items-center ${toggleEdit ? "flex-col" : "flex-row"}`}>
+                { !toggleEdit ?
+                <p className="text-sm font-semibold">{ user?.status }</p>
+                :
+                <>
+                  { statusLabel.map((status) => (
+                    <div key={status.id} className='cursor-pointer' onClick={() => changeUserStatus(status.label)}>
+                      {status.label}
+                    </div>
+                  ))}
+                </> }
+              <CiEdit onClick={() => setToggleEdit(!toggleEdit)}/>
+              </div>
             </div>
           </div>
           <div className="w-full flex flex-col sm:flex-row items-center justify-between">
