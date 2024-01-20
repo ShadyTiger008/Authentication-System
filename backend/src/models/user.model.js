@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     refreshToken: String,
     status: {
       type: String,
-      enum: ["Active", "Inactive", "Busy", "Invinsible", "Unavailable"],
+      enum: ["Active", "Inactive", "Busy", "Available", "Unavailable"],
       default: "Active",
     },
   },

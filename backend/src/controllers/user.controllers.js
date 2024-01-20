@@ -224,7 +224,7 @@ const changeUserStatus = asyncHandler(async (req, res) => {
   const user = await User.findById(userId);
 
   if (!user) {
-    throw new ApiError(404, "User not found!");
+    throw new ApiError(405, "User not found!");
   }
 
   const updatedUser = await User.findByIdAndUpdate(user._id, { status }, { new: true }).select("-password -refreshToken")

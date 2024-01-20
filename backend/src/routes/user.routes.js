@@ -30,7 +30,7 @@ router.route("/login").post(userLogin);
 router.route("/logout/:userId").get( userLogout);
 
 //Update user status
-router.route("/update-status").post( changeUserStatus)
+router.route("/update-status/:userId").post( changeUserStatus)
 
 //Get user by id route
 router.route("/get-user/:userId").get( getUserById);
